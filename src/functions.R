@@ -90,9 +90,10 @@ expit <- function(x) 1/(1 + exp(-x))
 # @import expit(x)
 # @param a: treatment assignment group
 # @param coeff: (b0, b1, b2, b3)
+# @param x: c(0,1,2)
 # @output Pr(y(a) = 1 | x)
 py_x <- function(a, coeff){
-  x <- c(0,1,2)
+  x = c(0,1,2)
   if(a == 0){
     f <- coeff[1] + coeff[2]*x
     p <- expit(f)
@@ -112,32 +113,32 @@ py_x(1, coeff)
 # @import py_x(a, coeff)
 # @param coeff: (b0, b1, b2, b3)
 # @param match_by: {"x", "h"}
-# @output c(p1,p2,p3,q1,q2,q3)
+# @output c(p1,p2,p3,q1,q2,q3) for (B | H)
 pb_h <- function(coeff, px_h1, px_h3, match_by){
   py0 <- py_x(a = 0, coeff)
   py1 <- py_x(a = 1, coeff)
   if(match_by == "x"){
     out_h1 <- out_h3 <- matrix(NA, nrow = 3, ncol = 3)
     for(i in 1:3){
-      out_h1[i,] <- px_h1[i]*c(py0[i]*(1 - py1[i]),
-                               py0[i]*py1[i] + (1 - py0[i])*(1 - py1[i]),
-                               (1 - py0[i])* py1[i])
+      out_h1[i,] <- px_h1[i]*c(py1[i]*(1 - py0[i]),
+                               py1[i]*py0[i] + (1 - py1[i])*(1 - py0[i]),
+                               (1 - py1[i])* py0[i])
       
-      out_h3[i,] <- px_h3[i]*c(py0[i]*(1 - py1[i]),
-                               py0[i]*py1[i] + (1 - py0[i])*(1 - py1[i]),
-                               (1 - py0[i])* py1[i])
+      out_h3[i,] <- px_h3[i]*c(py1[i]*(1 - py0[i]),
+                               py1[i]*py0[i] + (1 - py1[i])*(1 - py0[i]),
+                               (1 - py1[i])* py0[i])
     }
   }else{
     out_h1 <- out_h3 <- matrix(NA, nrow = 3*3, ncol = 3)
     for(i in 1:3){
       for(j in 1:3){
-        out_h1[(i-1)*3+j,] <- px_h1[i]*px_h1[j]*c(py0[i]*(1 - py1[j]),
-                                                  py0[i]*py1[j] + (1 - py0[i])*(1 - py1[j]),
-                                                  (1 - py0[i])* py1[j])
+        out_h1[(i-1)*3+j,] <- px_h1[i]*px_h1[j]*c(py1[i]*(1 - py0[j]),
+                                                  py1[i]*py0[j] + (1 - py1[i])*(1 - py0[j]),
+                                                  (1 - py1[i])* py0[j])
         
-        out_h3[(i-1)*3+j,] <- px_h3[i]*px_h3[j]*c(py0[i]*(1 - py1[j]),
-                                                  py0[i]*py1[j] + (1 - py0[i])*(1 - py1[j]),
-                                                  (1 - py0[i])* py1[j])
+        out_h3[(i-1)*3+j,] <- px_h3[i]*px_h3[j]*c(py1[i]*(1 - py0[j]),
+                                                  py1[i]*py0[j] + (1 - py1[i])*(1 - py0[j]),
+                                                  (1 - py1[i])* py0[j])
       }
     }
   }

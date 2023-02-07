@@ -42,13 +42,13 @@ for(i in 1:nn){
   
   # 1) matching factor X
   for(r in 1:3){
-    out_h1x[r,] <- px_h1[r]*c(py0[r]*(1 - py1[r]),
-                              py0[r]*py1[r] + (1 - py0[r])*(1 - py1[r]),
-                              (1 - py0[r])* py1[r])
+    out_h1x[r,] <- px_h1[r]*c(py1[r]*(1 - py0[r]),
+                              py1[r]*py0[r] + (1 - py1[r])*(1 - py0[r]),
+                              (1 - py1[r])* py0[r])
     
-    out_h3x[r,] <- px_h3[r]*c(py0[r]*(1 - py1[r]),
-                              py0[r]*py1[r] + (1 - py0[r])*(1 - py1[r]),
-                              (1 - py0[r])* py1[r])
+    out_h3x[r,] <- px_h3[r]*c(py1[r]*(1 - py0[r]),
+                              py1[r]*py0[r] + (1 - py1[r])*(1 - py0[r]),
+                              (1 - py1[r])* py0[r])
   }
   
   out_h1x <- colSums(out_h1x)
@@ -60,13 +60,13 @@ for(i in 1:nn){
   # 2) matching factor H
   for(k in 1:3){
     for(j in 1:3){
-      out_h1h[(k-1)*3+j,] <- px_h1[k]*px_h1[j]*c(py0[k]*(1 - py1[j]),
-                                                 py0[k]*py1[j] + (1 - py0[k])*(1 - py1[j]),
-                                                 (1 - py0[k])* py1[j])
+      out_h1h[(k-1)*3+j,] <- px_h1[k]*px_h1[j]*c(py1[k]*(1 - py0[j]),
+                                                 py1[k]*py0[j] + (1 - py1[k])*(1 - py0[j]),
+                                                 (1 - py1[k])* py0[j])
       
-      out_h3h[(k-1)*3+j,] <- px_h3[k]*px_h3[j]*c(py0[k]*(1 - py1[j]),
-                                                 py0[k]*py1[j] + (1 - py0[k])*(1 - py1[j]),
-                                                 (1 - py0[k])* py1[j])
+      out_h3h[(k-1)*3+j,] <- px_h3[k]*px_h3[j]*c(py1[k]*(1 - py0[j]),
+                                                 py1[k]*py0[j] + (1 - py1[k])*(1 - py0[j]),
+                                                 (1 - py1[k])* py0[j])
     }
   }
   
