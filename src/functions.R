@@ -72,7 +72,7 @@ cal_cfb <- function(c, p1, p3, q1, q3){
 
 
 # example
-
+cal_cfb(1/2, 0.25, 0.74, 0.14, 0.68)
 cal_cfb(1/4, 80/765, 184/765, 8/585, 64/585)
 cal_cfb(1/4, (8/135 + 4/459 + 8/225 + 4/765), (16/135 + 32/459 + 8/225 + 16/765), 8/585, 64/585)
 
@@ -162,5 +162,48 @@ pb_h(coeff, px_h1, px_h3, match_by = "h")
 
 
 
+# For a continuous beta(0.5,0.5) X calculate cfb for h*() via empirical distribution
 
+# @param triple = p1, p2, p3, q1, q2, q3
+# @param m = 10^7 num of randomly selected patient pairs
+# @output cfb and joint distribution of (B1, B2, H1, H2)
+sim_cfb <- function(triple, m = 10^7){
+  X1 <- rbeta(m, 0.5, 0.5)
+  X2 <- rbeta(m, 0.5, 0.5)
+  B1 <- B2 <- rep(NA,m)
+  
+  a <- triple[1] # p1
+  b <- triple[4] - triple[1] # q1 - p1
+  c <- triple[3] # p3
+  d <- triple[6] - triple[3] # q3 - p3
+  
+  
+  H1 <- c + d*X1 - (a + b*X1)
+  H2 <- c + d*X2 - (a + b*X2)
+  
+  
+  for(j in 1:m){
+    B1[j] <- sample(c(-1,0,1),
+                    size=1,
+                    prob=c(a + b*X1[j],
+                           1-(a + b*X1[j])-(c + d*X1[j]),
+                           c + d*X1[j]))
+    B2[j] <- sample(c(-1,0,1),
+                    size=1,
+                    prob=c(a + b*X2[j],
+                           1-(a + b*X2[j])-(c + d*X2[j]),
+                           c + d*X2[j]))
+  }
+  
+  cfb <- sum(sign(B1 - B2) == sign(H1 - H2) & B1!= B2)/sum(B1!= B2) + 
+    0.5*sum(H1 == H2 & B1!= B2)/sum(B1 != B2)
+  sd <- sqrt(cfb*(1-cfb)/m)
+  return(c(cfb, sd))
+}
+
+# example
+triple1 <- c(0.08,0,0.92,0,0.15,0.85)
+triple2 <- c(0.54,0.37,0.09,0.68,0.01,0.31)
+sim_cfb(triple1)
+sim_cfb(triple2)
 
