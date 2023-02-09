@@ -162,7 +162,7 @@ pb_h(coeff, px_h1, px_h3, match_by = "h")
 
 
 
-# For a continuous beta(0.5,0.5) X calculate cfb for h*() via empirical distribution
+# For a continuous beta(0.5,0.5) X calculate cfb for h*() via numerical methods
 
 # @param triple = p1, p2, p3, q1, q2, q3
 # @param m = 10^7 num of randomly selected patient pairs
