@@ -101,7 +101,6 @@ cfb.total <- as.data.frame(cfb)
 
 p <- cfb.total %>%  ggplot(aes(x = cfb)) +
   geom_histogram( binwidth=0.0003, fill="#69b3a2", color="#69b3a2", alpha=3) +
-  theme_ipsum() +
   theme(
     plot.title = element_text(size=15)
   ) + 
@@ -114,58 +113,12 @@ p <- cfb.total %>%  ggplot(aes(x = cfb)) +
   annotate("text", x=0.48, y=4000, label= "median = 0.4916", col = "blue", size = 3) +
   annotate("text", x=0.48, y=3500, label= "mean = 0.4886", col = "red", size = 3)
 
-# 4. Improper scenarios with continuous H (involve randomness)
+p + labs(x = "cfb",
+         y = "Counts") +
+  theme_ipsum() 
 
-# 1) Numerical search that gives the smallest cfb
-min <- out[which.min(cfb.total$cfb),]
-a <- min$outp1
-b <- min$outq1 - min$outp1
-c <- min$outp3
-d <- min$outq3 - min$outp3
-
-
-m <- 10^7
-b1 <- b2 <- rep(NA,m)
-
-# X ∼ Beta(0.5,0.5)
-x1 <- rbeta(m, 0.5, 0.5)
-x2 <- rbeta(m, 0.5, 0.5)
-
-#  Linear interpolations of the identified two triples 
-p1 <- c + d*x1 - (a + b*x1)
-p2 <- c + d*x2 - (a + b*x2)
-for(j in 1:m){
-  b1[j] <- sample(c(-1,0,1), size=1,
-                  prob=c(a + b*x1[j], 1-(a + b*x1[j])-(c + d*x1[j]), c + d*x1[j]))
-  b2[j] <- sample(c(-1,0,1),size=1,
-                  prob=c(a + b*x2[j], 1-(a + b*x2[j])-(c + d*x2[j]), c + d*x2[j]))
-}
-(cfb <- sum(sign(b1 - b2) == sign(p1-p2) & b1!=b2)/sum(b1!=b2) + 
-    0.5*sum(p1 == p2 & b1!=b2)/sum(b1!=b2))
-(sd <- sqrt(cfb*(1-cfb)/m))
-
-# 2) A less extreme situation
-a <- 0.54
-b <- 0.68 - 0.54
-c <- 0.09
-d <- 0.31 - 0.09
-
-m <- 10^7
-b1 <- b2 <- rep(NA,m)
-
-# X ∼ Beta(0.5,0.5)
-x1 <- rbeta(m, 0.5, 0.5)
-x2 <- rbeta(m, 0.5, 0.5)
-
-#  Linear interpolations of the identified two triples 
-p1 <- c + d*x1 - (a + b*x1)
-p2 <- c + d*x2 - (a + b*x2)
-for(j in 1:m){
-  b1[j] <- sample(c(-1,0,1), size=1,
-                  prob=c(a + b*x1[j], 1-(a + b*x1[j])-(c + d*x1[j]), c + d*x1[j]))
-  b2[j] <- sample(c(-1,0,1),size=1,
-                  prob=c(a + b*x2[j], 1-(a + b*x2[j])-(c + d*x2[j]), c + d*x2[j]))
-}
-(cfb <- sum(sign(b1 - b2) == sign(p1-p2) & b1!=b2)/sum(b1!=b2) + 
-    0.5*sum(p1 == p2 & b1!=b2)/sum(b1!=b2))
-(sd <- sqrt(cfb*(1-cfb)/m))
+# 4. Improper scenarios with continuous H* (involve randomness)
+triple1 <- c(0.08,0,0.92,0,0.15,0.85)
+triple2 <- c(0.54,0.37,0.09,0.68,0.01,0.31)
+sim_cfb(triple1)
+sim_cfb(triple2)
